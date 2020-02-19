@@ -1,15 +1,15 @@
 #!/bin/sh
 # Create password salt for graylog
-GRAYLOG_PASSWORD_SECRET_B64=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | base64 )
+GRAYLOG_PASSWORD_SECRET_B64=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | base64 -w0 )
 
 # Create graylog admin password
 GRAYLOG_ADMIN_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 )
-GRAYLOG_ADMIN_PASSWORD_B64=$( echo -n $GRAYLOG_ADMIN_PASSWORD | base64 )
+GRAYLOG_ADMIN_PASSWORD_B64=$( echo -n $GRAYLOG_ADMIN_PASSWORD | base64 -w0 )
 
-GRAYLOG_PASSWORD_SHA_B64=$(echo $GRAYLOG_ADMIN_PASSWORD | tr -d '\n' | sha256sum | cut -d" " -f1 | base64 )
+GRAYLOG_PASSWORD_SHA_B64=$(echo $GRAYLOG_ADMIN_PASSWORD | tr -d '\n' | sha256sum | cut -d" " -f1 | base64 -w0)
  
 # Create mongodb password
-MONGODB_PASSWORD_B64=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 | base64 )
+MONGODB_PASSWORD_B64=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 | base64 -w0)
 
 cat << EOF > secrets.yaml
 apiVersion: v1

@@ -9,10 +9,11 @@ metadata:
   namespace: graylog
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   dataSource: null
   resources:
     requests:
-      storage: 1Gi
-  storageClassName: default
+      storage: 512Mi
+  storageClassName: ""
+  volumeName: graylog-mongodb-volume
 
