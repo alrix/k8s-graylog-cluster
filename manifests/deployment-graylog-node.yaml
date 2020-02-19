@@ -1,0 +1,106 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: graylog-node
+    app.kubernetes.io/instance: graylog-node
+    app.kubernetes.io/name: graylog-node
+  name: graylog-node
+  namespace: graylog
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: graylog-node
+      app.kubernetes.io/instance: graylog-node
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: graylog-node
+        app.kubernetes.io/instance: graylog-node
+        app.kubernetes.io/name: graylog-node
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: build-node
+                operator: DoesNotExist
+      containers:
+      - env:
+        - name: MONGODB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: graylog
+              key: graylog.mongodb.user
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: graylog.mongodb.password
+              name: graylog
+        - name: MONGODB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: graylog
+              key: graylog.mongodb.database
+        - name: GRAYLOG_MONGODB_URI 
+          value: mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@graylog-mongodb:27017/$(MONGODB_DATABASE)?authSource=admin
+        - name: GRAYLOG_PASSWORD_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: graylog.password.secret
+              name: graylog
+        - name: GRAYLOG_ROOT_PASSWORD_SHA2
+          valueFrom:
+            secretKeyRef:
+              key: graylog.root.password.sha2
+              name: graylog
+        - name: GRAYLOG_ELASTICSEARCH_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              name: graylog
+              key: graylog.external.uri
+        - name: "GRAYLOG_IS_MASTER"
+          value: "false"
+        - name: "GRAYLOG_WEB_ENABLE"
+          value: "false"
+        image: graylog/graylog:3.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 9000
+          timeoutSeconds: 1
+        name: graylog-master
+        ports:
+        - containerPort: 12201
+          protocol: TCP
+        - containerPort: 12201
+          protocol: UDP
+        resources:
+          requests:
+            memory: 512Mi
+          limits:
+            memory: 1024Mi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      serviceAccount: graylog
+      serviceAccountName: graylog
+

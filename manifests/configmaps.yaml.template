@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: graylog
+  namespace: graylog
+data:
+  graylog.elasticsearch.host: update_me_please
+  graylog.external.uri: update_me_please
+  graylog.mongodb.user: graylog
+  graylog.mongodb.database: graylog
+---

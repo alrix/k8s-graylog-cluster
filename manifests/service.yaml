@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: graylog-gelf-udp
+  namespace: graylog
+  labels:
+    app.kubernetes.io/component: graylog-node
+    app.kubernetes.io/instance: graylog-node
+    app.kubernetes.io/name: graylog-gelf-udp
+spec:
+  ports:
+  - name: gelf-udp
+    port: 12201
+    protocol: UDP
+    targetPort: 12201
+  selector:
+    app.kubernetes.io/component: graylog-node
+    app.kubernetes.io/instance: graylog-node
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graylog-mongodb
+  namespace: graylog
+  labels:
+    app.kubernetes.io/component: mongodb-server
+    app.kubernetes.io/instance: graylog-mongodb
+    app.kubernetes.io/name: graylog-mongodb
+spec:
+  ports:
+  - name: mongo
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    app.kubernetes.io/component: mongodb-server
+    app.kubernetes.io/instance: graylog-mongodb
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graylog-http
+  namespace: graylog
+  labels:
+    app.kubernetes.io/component: graylog-master
+    app.kubernetes.io/instance: graylog-master
+    app.kubernetes.io/name: graylog-http
+spec:
+  ports:
+  - name: http
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app.kubernetes.io/component: graylog-master
+    app.kubernetes.io/instance: graylog-master
+  type: NodePort

@@ -1,0 +1,16 @@
+
+# General Ignores
+*.dll
+*.exe
+.DS_Store
+*.backup
+*.log
+*.bak
+*~
+
+# Ignore for IDE 
+.vscode
+
+# Specific ignores
+manifests/configmaps.yaml
+manifests/secrets.yaml
