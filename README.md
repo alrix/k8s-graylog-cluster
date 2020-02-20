@@ -23,4 +23,4 @@ Then deploy Graylog
 oc apply -f manifests/
 ```
 
-
+Once deployed, log into graylog and create an input source. You can deploy a fluentd daemonset to pull in all the logs from your openshift cluster and setup a json extractor on the input to break them down by field.
